@@ -1,0 +1,9 @@
+
+
+# Godot 4+ specific ignores
+.godot/
+
+# Godot general stuff
+*.import
+
+
