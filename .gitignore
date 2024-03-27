@@ -6,4 +6,4 @@
 # Godot general stuff
 *.import
 
-
+data/cache
