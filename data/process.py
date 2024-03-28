@@ -1,8 +1,9 @@
 
 import numpy as np
+import gc
+import json
 import torch
 import torchvision.transforms as transforms
-import gc
 
 from PIL import Image
 
@@ -26,13 +27,14 @@ def mem_fmt(num) -> str:
 
 def print_free_mem(torch_device) -> None:
     mem = torch.cuda.mem_get_info(device = torch_device)
-    print(f"Free mem: {mem_fmt(mem[0])} / totoal mem: {mem_fmt(mem[1])} on {torch_device}\n")
+    print(f"Free mem: {mem_fmt(mem[0])} / total mem: {mem_fmt(mem[1])} on {torch_device}\n")
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 transform = transforms.Compose([transforms.PILToTensor()])
 
 meta_data = {
+    "step_size": 513, # 513, 1025, 2049, 4097 : some game terrain handling algorithms require 2**n + 1 map sizes and these are the map sizes supported by the plugin
     "min_height": 0.0,
     "max_height": 0.0,
     "x_step": 0.5,
@@ -91,28 +93,36 @@ print_free_mem(device)
 
 meta_data["min_height"] = torch.min(torch.minimum(ahn3, ahn4)).to(torch.device("cpu")).item()
 meta_data["max_height"] = torch.max(max_map).to(torch.device("cpu")).item()
+while meta_data["max_height"] >= 1e+3: # The highest building on earth is ~830m  **NOTHING**  should be 3.4028234663852886e+38 tall
+    max_map = torch.where(max_map < meta_data["max_height"], max_map, 0.0)
+    meta_data["max_height"] = torch.max(max_map).to(torch.device("cpu")).item()
 
 print(f"Min height: {meta_data['min_height']}")
 print(f"Max height: {meta_data['max_height']}")
-print(f"Major iterations X: {max_map.shape[0] % 513 + 1} - map size X: {meta_data['x_step'] * max_map.shape[1]}")
-print(f"Major iterations Y: {max_map.shape[1] % 513 + 1} - map size Y: {meta_data['y_step'] * max_map.shape[2]}")
+print(f"Major iterations X: {max_map.shape[1] % meta_data['step_size'] + 1} - map size X: {meta_data['x_step'] * max_map.shape[1]}")
+print(f"Major iterations Y: {max_map.shape[2] % meta_data['step_size'] + 1} - map size Y: {meta_data['y_step'] * max_map.shape[2]}")
+
+del ahn3
+del ahn4
+gc.collect()
+torch.cuda.empty_cache()
 print_free_mem(device)
 
+# Offset map height to zero, necessary for the plugin
+max_map = torch.add(max_map, meta_data["min_height"])
+max_map = torch.where(max_map < 0.0, max_map, 0.0)
 
 
-'''
-for i in range(ahn3.shape[0] % 513 + 1):
-    for j in range(ahn3.shape[1] % 513 + 1):
-        chunk = np.zeros((513, 513), np.int32)
-        color = np.zeros((513, 513, 3), np.int8)
-        for x in range(513):
-            for y in range(513):
-                if i * 513 + x >= ahn3.shape[0]:
-                    chunk[x][y] = 0
-                chunk[x][y]
-                color[x][y]
-        print(f"{(i, j)}...")
+# Iterate through the map by step_size
+max_map.to(torch.device("cpu"))
+color.to(torch.device("cpu"))
+for x in range(max_map.shape[1] % meta_data['step_size'] + 1):
+    for y in range(max_map.shape[2] % meta_data['step_size'] + 1):
+        # Index data with step_size * step
+        max_map[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
+        color[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
+        
+        # Export color and height maps
 
-print(f"Export done")
-'''
+# Export metadata
 
