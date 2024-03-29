@@ -3,7 +3,8 @@ import numpy as np
 import gc
 import json
 import torch
-import torchvision.transforms as transforms
+import torch.nn.functional as F
+import torchvision
 
 from PIL import Image
 
@@ -31,7 +32,7 @@ def print_free_mem(torch_device) -> None:
 
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-transform = transforms.Compose([transforms.PILToTensor()])
+transform = torchvision.transforms.Compose([torchvision.transforms.PILToTensor()])
 
 meta_data = {
     "step_size": 513, # 513, 1025, 2049, 4097 : some game terrain handling algorithms require 2**n + 1 map sizes and these are the map sizes supported by the plugin
@@ -56,9 +57,9 @@ print_free_mem(device)
 
 
 red = torch.gt(ahn3, ahn4)
-color[0].masked_fill(red, 0xff)
-color[1].masked_fill(red, 0x00)
-color[2].masked_fill(red, 0x00)
+color[0] = color[0].masked_fill(red, 0xff)
+color[1] = color[1].masked_fill(red, 0x00)
+color[2] = color[2].masked_fill(red, 0x00)
 del red
 gc.collect()
 torch.cuda.empty_cache()
@@ -66,9 +67,9 @@ print_free_mem(device)
 
 
 blue = torch.lt(ahn3, ahn4)
-color[0].masked_fill(blue, 0x00)
-color[1].masked_fill(blue, 0x00)
-color[2].masked_fill(blue, 0xff)
+color[0] = color[0].masked_fill(blue, 0x00)
+color[1] = color[1].masked_fill(blue, 0x00)
+color[2] = color[2].masked_fill(blue, 0xff)
 del blue
 gc.collect()
 torch.cuda.empty_cache()
@@ -76,9 +77,9 @@ print_free_mem(device)
 
 
 is_close = torch.isclose(ahn3, ahn4, rtol = 0, atol = 1e-1, equal_nan = True) # Ignore 10 cm of measurement error
-color[0].masked_fill(is_close, 0x77)
-color[1].masked_fill(is_close, 0x77)
-color[2].masked_fill(is_close, 0x77)
+color[0] = color[0].masked_fill(is_close, 0x77)
+color[1] = color[1].masked_fill(is_close, 0x77)
+color[2] = color[2].masked_fill(is_close, 0x77)
 del is_close
 gc.collect()
 torch.cuda.empty_cache()
@@ -87,7 +88,7 @@ print_free_mem(device)
 
 
 
-max_map = torch.maximum(ahn3, ahn4).to(device)
+max_map = torch.maximum(ahn3, ahn4)
 print_free_mem(device)
 
 
@@ -99,8 +100,8 @@ while meta_data["max_height"] >= 1e+3: # The highest building on earth is ~830m 
 
 print(f"Min height: {meta_data['min_height']}")
 print(f"Max height: {meta_data['max_height']}")
-print(f"Major iterations X: {max_map.shape[1] % meta_data['step_size'] + 1} - map size X: {meta_data['x_step'] * max_map.shape[1]}")
-print(f"Major iterations Y: {max_map.shape[2] % meta_data['step_size'] + 1} - map size Y: {meta_data['y_step'] * max_map.shape[2]}")
+print(f"Major iterations X: {int(max_map.shape[1] / meta_data['step_size']) + 1} - map size X: {meta_data['x_step'] * max_map.shape[1]}")
+print(f"Major iterations Y: {int(max_map.shape[2] / meta_data['step_size']) + 1} - map size Y: {meta_data['y_step'] * max_map.shape[2]}")
 
 del ahn3
 del ahn4
@@ -108,21 +109,54 @@ gc.collect()
 torch.cuda.empty_cache()
 print_free_mem(device)
 
-# Offset map height to zero, necessary for the plugin
-max_map = torch.add(max_map, meta_data["min_height"])
-max_map = torch.where(max_map < 0.0, max_map, 0.0)
+# Quantize data and get it into the right device memory
+print(max_map)
+max_map = torch.add(max_map, abs(meta_data["min_height"]))
+print(max_map)
+#max_map = torch.where(max_map < 0.0, max_map, 0.0)
+#print(max_map)
+max_map = torch.quantize_per_tensor(max_map, meta_data["max_height"] / 256, 0, torch.quint8).int_repr().to(torch.device("cpu"))
+print(max_map)
+color = color.to(torch.device("cpu"))
 
 
 # Iterate through the map by step_size
-max_map.to(torch.device("cpu"))
-color.to(torch.device("cpu"))
-for x in range(max_map.shape[1] % meta_data['step_size'] + 1):
-    for y in range(max_map.shape[2] % meta_data['step_size'] + 1):
-        # Index data with step_size * step
-        max_map[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
-        color[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
+for x in range(int(max_map.shape[1] / meta_data['step_size']) + 1):
+    for y in range(int(max_map.shape[2] / meta_data['step_size']) + 1):
         
         # Export color and height maps
+        filename_height = f"{meta_data['step_size']}/{x}_{y}_height.png"
+        filename_color = f"{meta_data['step_size']}/{x}_{y}_color.png"
+        #print(f"{filename_height}, {filename_color}")
+
+        m = max_map[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
+        c = color[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
+        pad_x = 513 - m.shape[1]
+        pad_y = 513 - m.shape[2]
+
+        if pad_x > 0:
+            #print(f"m size: {m.shape}, padding_needed: {pad_x}, {pad_y}")
+            m = F.pad(m, (0, 0, 0, pad_x), "constant", torch.tensor(0))
+            #print(f"new_size: {m.shape}")
+            #print(f"c size: {c.shape}, padding_needed: {pad_x}, {pad_y}")
+            c = F.pad(c, (0, 0, 0, pad_x), "replicate")
+            #print(f"new_size: {c.shape}")
+        if pad_y > 0:
+            #print(f"m size: {m.shape}, padding_needed: {pad_x}, {pad_y}")
+            m = F.pad(m, (0, pad_y), "constant", torch.tensor(0))
+            #print(f"new_size: {m.shape}")
+            #print(f"c size: {c.shape}, padding_needed: {pad_x}, {pad_y}")
+            c = F.pad(c, (0, pad_y), "replicate")
+            #print(f"new_size: {c.shape}")
+
+        torchvision.io.write_png(m, filename_height, 9)
+        torchvision.io.write_png(c, filename_color, 9)
 
 # Export metadata
+try:
+    with open(f"{meta_data['step_size']}/metadata.json", "w") as f:
+        f.write(json.dumps(meta_data, indent = 2))
+except Exception as e:
+    with open(f"{meta_data['step_size']}/metadata.json", "x") as f:
+        f.write(json.dumps(meta_data, indent = 2))
 
