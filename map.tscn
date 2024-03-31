@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://bdxh8nn3cyybm"]
+[gd_scene load_steps=7 format=3 uid="uid://bdxh8nn3cyybm"]
 
 [ext_resource type="Script" path="res://map.gd" id="1_4ufyq"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="2_sds4q"]
 [ext_resource type="Resource" path="res://terrain_test/data.hterrain" id="3_3bm6a"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_han0q"]
+[ext_resource type="PackedScene" uid="uid://djcyhlr4lfduk" path="res://camera_controller.tscn" id="5_yof0h"]
 
 [sub_resource type="Resource" id="Resource_3mevm"]
 script = ExtResource("3_han0q")
@@ -16,7 +17,6 @@ script = ExtResource("1_4ufyq")
 [node name="HTerrain" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.407, 0)
 script = ExtResource("2_sds4q")
-map_scale = Vector3(0.5, 1, 0.5)
 centered = true
 _terrain_data = ExtResource("3_3bm6a")
 chunk_size = 32
@@ -30,6 +30,4 @@ texture_set = SubResource("Resource_3mevm")
 render_layers = 1
 cast_shadow = 1
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.564204, 0.825636, 0, -0.825636, 0.564204, 0, 154.608, -0.413746)
-current = true
+[node name="Camera_Controller" parent="." instance=ExtResource("5_yof0h")]

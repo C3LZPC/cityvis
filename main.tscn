@@ -1,22 +1,30 @@
 [gd_scene load_steps=5 format=3 uid="uid://dtd0lextaqrsi"]
 
-[ext_resource type="PackedScene" uid="uid://bdxh8nn3cyybm" path="res://map.tscn" id="1_6id5l"]
-
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_exolq"]
-
-[sub_resource type="Sky" id="Sky_6vyts"]
-sky_material = SubResource("PhysicalSkyMaterial_exolq")
+[ext_resource type="Script" path="res://main.gd" id="1_f0irb"]
+[ext_resource type="PackedScene" uid="uid://djcyhlr4lfduk" path="res://camera_controller.tscn" id="2_xa613"]
+[ext_resource type="PackedScene" uid="uid://2oe5jwv0f1c8" path="res://gui.tscn" id="3_i0jnd"]
 
 [sub_resource type="Environment" id="Environment_ppoij"]
-background_mode = 2
-sky = SubResource("Sky_6vyts")
+background_mode = 1
+background_color = Color(0.792157, 0.862745, 1, 1)
+ambient_light_color = Color(1, 1, 1, 1)
+ssao_enabled = true
 
 [node name="Main" type="Node3D"]
+script = ExtResource("1_f0irb")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ppoij")
 
-[node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 30, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1000, 0)
+light_color = Color(1, 0.945098, 0, 1)
+directional_shadow_mode = 0
+sky_mode = 1
 
-[node name="Map" parent="." instance=ExtResource("1_6id5l")]
+[node name="TerrainBase" type="Node3D" parent="."]
+
+[node name="Camera3D" parent="." instance=ExtResource("2_xa613")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 70, 0)
+
+[node name="GUI" parent="." instance=ExtResource("3_i0jnd")]
