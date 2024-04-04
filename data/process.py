@@ -134,8 +134,8 @@ for x in range(int(max_map.shape[1] / meta_data['step_size']) + 1):
 		filename_color = f"{meta_data['step_size']}/{x}_{y}_color.png"
 		#print(f"{filename_height}, {filename_color}")
 
-		m = max_map[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
-		c = color[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'], y * meta_data['step_size']:(y + 1) * meta_data['step_size']]
+		m = max_map[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'] + 1, y * meta_data['step_size']:(y + 1) * meta_data['step_size'] + 1]
+		c = color[:, x * meta_data['step_size']:(x + 1) * meta_data['step_size'] + 1, y * meta_data['step_size']:(y + 1) * meta_data['step_size'] + 1]
 		pad_x = 513 - m.shape[1]
 		pad_y = 513 - m.shape[2]
 
