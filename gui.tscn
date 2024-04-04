@@ -4,3 +4,23 @@
 
 [node name="GUI" type="CanvasLayer"]
 script = ExtResource("1_efjmb")
+
+[node name="Mertrics" type="PanelContainer" parent="."]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -40.0
+offset_top = -40.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="MetricsContainer" type="VBoxContainer" parent="Mertrics"]
+layout_mode = 2
+
+[node name="FPS" type="Label" parent="Mertrics/MetricsContainer"]
+layout_mode = 2
+
+[node name="Mem" type="Label" parent="Mertrics/MetricsContainer"]
+layout_mode = 2
