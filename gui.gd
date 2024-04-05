@@ -3,7 +3,6 @@ extends CanvasLayer
 
 
 func _ready():
-	#TODO:
 	pass
 
 func printable_num(n : int) -> String:
@@ -11,16 +10,16 @@ func printable_num(n : int) -> String:
 	var postfix = " B"
 	
 	if n / (1024 ** 1) > 1:
-		i = n / (1024 ** 1)
+		i = float(n) / (1024 ** 1)
 		postfix = " KB"
 	if n / (1024 ** 2) > 1:
-		i = n / (1024 ** 2)
+		i = float(n) / (1024 ** 2)
 		postfix = " MB"
 	if n / (1024 ** 3) > 1:
-		i = n / (1024 ** 3)
+		i = float(n) / (1024 ** 3)
 		postfix = " GB"
 	if n / (1024 ** 4) > 1:
-		i = n / (1024 ** 4)
+		i = float(n) / (1024 ** 4)
 		postfix = " TB"
 	
 	return "%10.3f" % i + postfix
@@ -28,4 +27,5 @@ func printable_num(n : int) -> String:
 func _process(delta):
 	get_node("Mertrics/MetricsContainer/FPS").text = "FPS: %10.2f" % Engine.get_frames_per_second()
 	var mem = OS.get_memory_info()
-	get_node("Mertrics/MetricsContainer/Mem").text = "RAM: " + printable_num(mem["free"]) + " / " + printable_num(mem["available"])
+	#get_node("Mertrics/MetricsContainer/Mem").text = "RAM: " + printable_num(mem["free"]) + " / " + printable_num(mem["available"])
+	get_node("Mertrics/MetricsContainer/Mem").text = "RAM: " + printable_num(mem["stack"]) + " / " + printable_num(mem["free"])
