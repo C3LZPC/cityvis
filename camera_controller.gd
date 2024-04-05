@@ -5,6 +5,8 @@ const mouse_sensitivity = 0.1
 var v = Vector3()
 var is_scanning_mouse = true
 
+var ui = null
+
 func _ready():
 	self.near = 0.1
 	self.far = 100000
@@ -32,6 +34,9 @@ func _process(_delta):
 		translate(Vector3.LEFT * mouse_sensitivity * mul)
 	if Input.is_key_pressed(KEY_D):
 		translate(Vector3.RIGHT * mouse_sensitivity * mul)
+	
+	if ui != null:
+		ui.update_position(self.position)
 
 func _input(event):
 	if is_scanning_mouse and event is InputEventMouseMotion:

@@ -1,9 +1,34 @@
-[gd_scene load_steps=2 format=3 uid="uid://2oe5jwv0f1c8"]
+[gd_scene load_steps=3 format=3 uid="uid://2oe5jwv0f1c8"]
 
 [ext_resource type="Script" path="res://gui.gd" id="1_efjmb"]
+[ext_resource type="Material" uid="uid://bosbb3ulv66qd" path="res://diamond_material.tres" id="2_0dtsw"]
 
 [node name="GUI" type="CanvasLayer"]
 script = ExtResource("1_efjmb")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+material = ExtResource("2_0dtsw")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Pos" type="PanelContainer" parent="."]
+visible = false
+offset_right = 40.0
+offset_bottom = 50.0
+
+[node name="PosContainer" type="VBoxContainer" parent="Pos"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Pos/PosContainer"]
+layout_mode = 2
+text = "Position:"
+
+[node name="Pos" type="Label" parent="Pos/PosContainer"]
+layout_mode = 2
 
 [node name="Mertrics" type="PanelContainer" parent="."]
 anchors_preset = 3
@@ -23,4 +48,23 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="Mem" type="Label" parent="Mertrics/MetricsContainer"]
+layout_mode = 2
+
+[node name="LoadProgress" type="PanelContainer" parent="."]
+anchors_preset = 14
+anchor_top = 0.5
+anchor_right = 1.0
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LoadProgressContainer" type="VBoxContainer" parent="LoadProgress"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="LoadProgress/LoadProgressContainer"]
+layout_mode = 2
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Progress" type="ProgressBar" parent="LoadProgress/LoadProgressContainer"]
 layout_mode = 2

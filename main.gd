@@ -14,6 +14,7 @@ var t_x = 0
 var t_y = 0
 
 @onready var tb = get_node("TerrainBase")
+@onready var ui = get_node("GUI")
 var height_offset = 0.0
 var map_step = 512
 
@@ -28,6 +29,7 @@ func _load_map_from_thread(x : int, y : int, step_size : int, terrain : HTerrain
 
 func _loading_done(terrain : HTerrain, data : HTerrainData):
 	terrain.set_data(data)
+	ui.update_progressbar()
 
 func _process(_delta):
 	var finished_threads = []
@@ -61,6 +63,8 @@ func _process(_delta):
 		self.set_process(false)
 
 func _ready():
+	get_node("Camera3D").ui = ui
+	
 	for c in tb.get_children():
 		c.queue_free()
 	
@@ -75,3 +79,6 @@ func _ready():
 		t_y = map_max_y
 		
 		get_node("Camera3D").translate(Vector3(map_max_y * 0.5 * 0.5 * map_step, 0, map_max_x * 0.5 * 0.5 * map_step))
+		
+		#ui.reset_progressbar((map_max_x - 1) * map_max_y)
+		ui.reset_progressbar(map_max_x * map_max_y)

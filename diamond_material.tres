@@ -1,0 +1,8 @@
+[gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bosbb3ulv66qd"]
+
+[ext_resource type="Shader" path="res://diamond.gdshader" id="1_yqb0f"]
+
+[resource]
+shader = ExtResource("1_yqb0f")
+shader_parameter/progress = 0.0
+shader_parameter/diamondPixelSize = 20.0
