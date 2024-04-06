@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://dtd0lextaqrsi"]
+[gd_scene load_steps=6 format=3 uid="uid://dtd0lextaqrsi"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_f0irb"]
 [ext_resource type="PackedScene" uid="uid://djcyhlr4lfduk" path="res://camera_controller.tscn" id="2_xa613"]
@@ -9,15 +9,18 @@ background_mode = 1
 background_color = Color(0.792157, 0.862745, 1, 1)
 ambient_light_color = Color(1, 1, 1, 1)
 ambient_light_energy = 0.0
+tonemap_mode = 3
 ssao_enabled = true
 ssao_radius = 1000.0
-ssao_detail = 0.9
+
+[sub_resource type="CameraAttributesPractical" id="CameraAttributesPractical_rhknt"]
 
 [node name="Main" type="Node3D"]
 script = ExtResource("1_f0irb")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_ppoij")
+camera_attributes = SubResource("CameraAttributesPractical_rhknt")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1000, 0)

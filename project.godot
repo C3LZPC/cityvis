@@ -36,6 +36,7 @@ enabled=PackedStringArray("res://addons/zylann.hterrain/plugin.cfg")
 [filesystem]
 
 import/blender/enabled=false
+import/fbx/enabled=false
 
 [rendering]
 

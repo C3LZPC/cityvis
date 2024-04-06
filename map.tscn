@@ -1,8 +1,7 @@
-[gd_scene load_steps=7 format=3 uid="uid://bdxh8nn3cyybm"]
+[gd_scene load_steps=6 format=3 uid="uid://bdxh8nn3cyybm"]
 
 [ext_resource type="Script" path="res://map.gd" id="1_4ufyq"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain.gd" id="2_sds4q"]
-[ext_resource type="Resource" path="res://terrain_test/data.hterrain" id="3_3bm6a"]
 [ext_resource type="Script" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="3_han0q"]
 [ext_resource type="PackedScene" uid="uid://djcyhlr4lfduk" path="res://camera_controller.tscn" id="5_yof0h"]
 
@@ -18,7 +17,7 @@ script = ExtResource("1_4ufyq")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -11.407, 0)
 script = ExtResource("2_sds4q")
 centered = true
-_terrain_data = ExtResource("3_3bm6a")
+_terrain_data = null
 chunk_size = 32
 collision_enabled = true
 collision_layer = 1

@@ -10,3 +10,5 @@ data/cache
 data/512
 
 terrain_test/*
+
+export/*

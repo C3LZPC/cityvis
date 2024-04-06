@@ -16,14 +16,15 @@ var t_y = 0
 @onready var tb = get_node("TerrainBase")
 @onready var ui = get_node("GUI")
 var height_offset = 0.0
+var max_height = 0.0
 var map_step = 512
 
-func _load_map_from_thread(x : int, y : int, step_size : int, terrain : HTerrain):
+func _load_map_from_thread(x : int, y : int, step_size : int, min_height : float, lmax_height : float, terrain : HTerrain):
 	var data = HTerrainData.new()
-	data._locked = true
 	data.resize(step_size + 1)
+	
 	data._import_map(HTerrainData.CHANNEL_COLOR, "res://data/" + str(step_size) + "/" + str(x) + "_" + str(y) + "_color.png")
-	data._import_heightmap("res://data/" + str(step_size) + "/" + str(x) + "_" + str(y) + "_height.png", 0.0, 256.0, false)
+	data._import_heightmap("res://data/" + str(step_size) + "/" + str(x) + "_" + str(y) + "_height.png", 0.0, lmax_height - min_height, false)
 	
 	call_deferred("_loading_done", terrain, data)
 
@@ -50,7 +51,7 @@ func _process(_delta):
 			terrain.set_shader_type(HTerrain.SHADER_LOW_POLY)
 			
 			var t = Thread.new()
-			while t.start(_load_map_from_thread.bind(c_x, c_y, map_step, terrain)) != OK:
+			while t.start(_load_map_from_thread.bind(c_x, c_y, map_step, height_offset, max_height, terrain)) != OK:
 				t = Thread.new()
 			threads.append(t)
 			c_y += 1
@@ -71,6 +72,7 @@ func _ready():
 	var map_metadata = JSON.parse_string(FileAccess.get_file_as_string("res://data/" + str(map_step) + "/metadata.json"))
 	if map_metadata:
 		height_offset = map_metadata["min_height"]
+		max_height = map_metadata["max_height"]
 		#var map_max_x = 5
 		#var map_max_y = 5
 		var map_max_x = int(map_metadata["x"])
@@ -80,5 +82,4 @@ func _ready():
 		
 		get_node("Camera3D").translate(Vector3(map_max_y * 0.5 * 0.5 * map_step, 0, map_max_x * 0.5 * 0.5 * map_step))
 		
-		#ui.reset_progressbar((map_max_x - 1) * map_max_y)
 		ui.reset_progressbar(map_max_x * map_max_y)
