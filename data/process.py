@@ -45,11 +45,11 @@ meta_data = {
 }
 
 
-ahn3 = Image.open("AHN3_R_25EZ1.TIF")
+ahn3 = Image.open("cache/AHN3_R_25EZ1.TIF")
 ahn3 = transform(ahn3).to(device)
 print_free_mem(device)
 
-ahn4 = Image.open("AHN4_R_25EZ1.TIF")
+ahn4 = Image.open("cache/AHN4_R_25EZ1.TIF")
 ahn4 = transform(ahn4).to(device)
 print_free_mem(device)
 
