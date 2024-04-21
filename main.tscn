@@ -24,9 +24,8 @@ camera_attributes = SubResource("CameraAttributesPractical_rhknt")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1000, 0)
+visible = false
 light_color = Color(1, 0.992157, 0.8, 1)
-directional_shadow_mode = 0
-sky_mode = 1
 
 [node name="TerrainBase" type="Node3D" parent="."]
 

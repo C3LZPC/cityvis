@@ -54,10 +54,12 @@ ahn4 = transform(ahn4).to(device)
 print_free_mem(device)
 
 
-color = torch.zeros(3, ahn3.shape[1], ahn3.shape[2], device = device, dtype = torch.uint8)
+#color = torch.zeros(3, ahn3.shape[1], ahn3.shape[2], device = device, dtype = torch.uint8)
+color = Image.open("cache/color_map_scaled.png")
+color = transform(color).to(device)
 print_free_mem(device)
 
-
+"""
 red = torch.gt(ahn3, ahn4)
 color[0] = color[0].masked_fill(red, 0xff)
 color[1] = color[1].masked_fill(red, 0x00)
@@ -86,7 +88,7 @@ del is_close
 gc.collect()
 torch.cuda.empty_cache()
 print_free_mem(device)
-
+"""
 
 
 

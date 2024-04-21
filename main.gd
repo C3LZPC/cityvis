@@ -26,6 +26,18 @@ func _load_map_from_thread(x : int, y : int, step_size : int, min_height : float
 	data._import_map(HTerrainData.CHANNEL_COLOR, "res://data/" + str(step_size) + "/" + str(x) + "_" + str(y) + "_color.png")
 	data._import_heightmap("res://data/" + str(step_size) + "/" + str(x) + "_" + str(y) + "_height.png", 0.0, lmax_height - min_height, false)
 	
+	'''
+	var hmap : Image = data.get_image(HTerrainData.CHANNEL_HEIGHT)
+	var normal_map = data.get_image(HTerrainData.CHANNEL_NORMAL)
+	for a in hmap.get_width():
+		for b in hmap.get_height():
+			var h = hmap.get_pixel(a, b).r
+			var h_r = hmap.get_pixel(a + 1, b).r
+			var h_f = hmap.get_pixel(a, b + 1).r
+			var n = Vector3(h - h_r, 0.1, h_f - h).normalized()
+			normal_map.set_pixel(a, b, HTerrainData.encode_normal(n))
+	'''
+	
 	call_deferred("_loading_done", terrain, data)
 
 func _loading_done(terrain : HTerrain, data : HTerrainData):
@@ -73,10 +85,10 @@ func _ready():
 	if map_metadata:
 		height_offset = map_metadata["min_height"]
 		max_height = map_metadata["max_height"]
-		#var map_max_x = 5
-		#var map_max_y = 5
-		var map_max_x = int(map_metadata["x"])
-		var map_max_y = int(map_metadata["y"])
+		var map_max_x = 5
+		var map_max_y = 5
+		#var map_max_x = int(map_metadata["x"])
+		#var map_max_y = int(map_metadata["y"])
 		t_x = map_max_x
 		t_y = map_max_y
 		
