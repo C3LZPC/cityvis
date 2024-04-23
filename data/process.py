@@ -55,7 +55,7 @@ print_free_mem(device)
 
 
 #color = torch.zeros(3, ahn3.shape[1], ahn3.shape[2], device = device, dtype = torch.uint8)
-color = Image.open("cache/color_map_scaled2.png")
+color = Image.open("cache/color_map_scaled4.png")
 color = transform(color).to(device)
 print_free_mem(device)
 

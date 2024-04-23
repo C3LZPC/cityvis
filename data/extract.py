@@ -82,7 +82,8 @@ def getImageCluster2(xmin, ymin, xmax, ymax, zoom):
                 tile = Image.open(BytesIO(imgstr.content))
 
                 box_x = (xtile - xmin) * 256
-                box_y = (ytile - ymin) * 255
+                box_y = (ytile - ymin) * 256
+                #box_y = (ytile - ymin) * 255
                 box_extents = (box_x, box_y)
                 img.paste(tile, box = box_extents)
 
@@ -129,22 +130,41 @@ if __name__ == "__main__":
 
     xmin, ymin = deg2num2(min_latlong[0], min_latlong[1], zoom, True)
     xmax, ymax = deg2num2(max_latlong[0], max_latlong[1], zoom, True)
+    xmin -= 1
+    #xmax -= 1
+    ymin -= 1
+    #ymax -= 1
     print(f"Coords: ({xmin}, {ymin}) - ({xmax}, {ymax})")
 
     a = getImageCluster2(int(xmin), int(ymin), int(xmax),  int(ymax), zoom)
 
+
+    """
     # crop end
     x, y = a.size
-    x = x - int(256 * (1 - (xmax - int(xmax))))
-    y = y - int(256 * (1 - (ymax - int(ymax))))
+    x = x - round(256 * (1 - (xmax - int(xmax))))
+    y = y - round(256 * (1 - (ymax - int(ymax))))
     a = a.crop((0, 0, x, y))
     
     # crop beginning
     x, y = a.size
-    c = int(256 * (xmin - int(xmin)))
-    d = int(256 * (ymin - int(ymin)))
+    c = round(256 * (xmin - int(xmin)))
+    d = round(256 * (ymin - int(ymin)))
+    a = a.crop((c, d, x, y))
+    """
+
+    #crop end
+    x, y = a.size
+    x = x - round(256 * (1 - (xmin - int(xmin))))
+    y = y - round(256 * (1 - (ymin - int(ymin))))
+    a = a.crop((0, 0, x, y))
+
+    # crop beginning
+    x, y = a.size
+    c = round(256 * (xmax - int(xmax)))
+    d = round(256 * (ymax - int(ymax)))
     a = a.crop((c, d, x, y))
     
 
-    a.save(f"cache/{zoom},{xmin},{ymin}.png")
+    a.save(f"cache/{zoom},({int(xmin)},{int(ymin)}) - ({int(xmax)},{int(ymax)}).png")
 
