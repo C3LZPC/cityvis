@@ -7,7 +7,7 @@
 [sub_resource type="Environment" id="Environment_ppoij"]
 background_mode = 1
 background_color = Color(0.792157, 0.862745, 1, 1)
-ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_source = 2
 ambient_light_energy = 0.0
 tonemap_mode = 3
 ssao_enabled = true
@@ -23,9 +23,14 @@ environment = SubResource("Environment_ppoij")
 camera_attributes = SubResource("CameraAttributesPractical_rhknt")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0, 1000, 0)
-visible = false
-light_color = Color(1, 0.992157, 0.8, 1)
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
+light_color = Color(0.941176, 0.941176, 0.941176, 1)
+light_indirect_energy = 0.7
+light_volumetric_fog_energy = 0.0
+light_angular_distance = 0.5
+light_bake_mode = 0
+shadow_enabled = true
+sky_mode = 1
 
 [node name="TerrainBase" type="Node3D" parent="."]
 
