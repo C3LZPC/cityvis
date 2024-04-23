@@ -1,13 +1,15 @@
 
 
 import matplotlib.pyplot as plt
-import numpy as np
 import math
+import numpy as np
+import os
 import requests
+
 from io import BytesIO
 from PIL import Image
+from osgeo import osr, gdal
 
-import os
 
 
 # Based on https://stackoverflow.com/questions/28476117/easy-openstreetmap-tile-displaying-for-python
@@ -27,7 +29,19 @@ def deg2num(lat_deg, lon_deg, zoom, as_float = False):
     xtile = int(xtile)
     ytile = int(ytile)
   return (xtile, ytile)
-    
+
+def deg2num2(lat_deg, lon_deg, zoom, as_float = False):
+    # based on https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+    lat_rad = math.radians(lat_deg)
+    n = 2 ** zoom
+    tile_x = n * ((lon_deg + 180) / 360)
+    tile_y = n * (1 - (math.asinh(math.tan(lat_rad)) / math.pi)) / 2
+    if not as_float:
+        tile_x = int(tile_x)
+        tile_y = int(tile_y)
+    return (tile_x, tile_y)
+
+
 def num2deg(xtile, ytile, zoom):
   n = 2.0 ** zoom
   lon_deg = xtile / n * 360.0 - 180.0
@@ -78,23 +92,44 @@ def getImageCluster2(xmin, ymin, xmax, ymax, zoom):
    
     return img
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     #zoom = 13
     zoom = 17
+    
+    ds = gdal.Open("cache/AHN4_R_25EZ1.TIF")
+    old_cs = osr.SpatialReference()
+    old_cs.ImportFromWkt(ds.GetProjectionRef())
+    wgs84_wkt = """
+    GEOGCS["WGS 84",
+        DATUM["WGS_1984",
+            SPHEROID["WGS 84",6378137,298.257223563, AUTHORITY["EPSG","7030"]],
+            AUTHORITY["EPSG","6326"]],
+        PRIMEM["Greenwich",0, AUTHORITY["EPSG","8901"]],
+        UNIT["degree",0.01745329251994328, AUTHORITY["EPSG","9122"]],
+        AUTHORITY["EPSG","4326"]]
+    """
+    new_cs = osr.SpatialReference()
+    new_cs.ImportFromWkt(wgs84_wkt)
+    transform = osr.CoordinateTransformation(old_cs, new_cs)
 
-    lat = degrees_to_decimal(52, 25, 53.21)
-    lat_max = degrees_to_decimal(52, 22, 32.04)
+    width = ds.RasterXSize
+    height = ds.RasterYSize
+    gt = ds.GetGeoTransform()
 
-    lon = degrees_to_decimal(4, 52, 22.59)
-    lon_max = degrees_to_decimal(4, 56, 49.30)
+    lat = gt[0]
+    lat_max = gt[0] + width * gt[1] + height * gt[2]
+    
+    lon = gt[3] + width * gt[4] + height * gt[5]
+    lon_max = gt[3]
 
-    delta_lat = lat - lat_max
-    delta_lon = lon - lon_max
-    print(lat, lon, lat_max, lon_max)
 
-    xmin, ymin = deg2num(lat, lon, zoom, True)
-    xmax, ymax = deg2num(lat_max, lon_max, zoom, True)
-    print(xmin, ymin, xmax, ymax)
+    min_latlong = transform.TransformPoint(lat, lon)
+    max_latlong = transform.TransformPoint(lat_max, lon_max)
+    print(f"Points: {min_latlong} - {max_latlong}")
+
+    xmin, ymin = deg2num2(min_latlong[0], min_latlong[1], zoom, True)
+    xmax, ymax = deg2num2(max_latlong[0], max_latlong[1], zoom, True)
+    print(f"Coords: ({xmin}, {ymin}) - ({xmax}, {ymax})")
 
     a = getImageCluster2(int(xmin), int(ymin), int(xmax),  int(ymax), zoom)
 
@@ -103,6 +138,7 @@ if __name__ == '__main__':
     x = x - int(256 * (1 - (xmax - int(xmax))))
     y = y - int(256 * (1 - (ymax - int(ymax))))
     a = a.crop((0, 0, x, y))
+    
     # crop beginning
     x, y = a.size
     c = int(256 * (xmin - int(xmin)))
@@ -112,7 +148,3 @@ if __name__ == '__main__':
 
     a.save(f"cache/{zoom},{xmin},{ymin}.png")
 
-    fig = plt.figure()
-    fig.patch.set_facecolor('white')
-    plt.imshow(np.asarray(a))
-    plt.show()
