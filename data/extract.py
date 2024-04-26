@@ -63,8 +63,10 @@ def getImageCluster2(xmin, ymin, xmax, ymax, zoom):
 
 
 
-    img_x = int((abs(xmax - xmin) + 1) * 256 - 1)
-    img_y = int((abs(ymax - ymin) + 1) * 256 - 1)
+    img_x = int((abs(xmax - xmin) + 1) * 256)
+    img_y = int((abs(ymax - ymin) + 1) * 256)
+    #img_x = int((abs(xmax - xmin) + 1) * 256 - 1)
+    #img_y = int((abs(ymax - ymin) + 1) * 256 - 1)
     img_extents = (img_x, img_y)
 
     img = Image.new("RGB", img_extents)
@@ -75,11 +77,17 @@ def getImageCluster2(xmin, ymin, xmax, ymax, zoom):
         for ytile in range(int(ymin), int(ymax) + 1):
             imgurl = f"http://tile.openstreetmap.org/{zoom}/{xtile}/{ytile}.png"
 
+            #headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36"}
+            #layer = "s" # h = roads only ; m = standard roadmap ; p = terrain ; r = somehow altered roadmap ; s = satellite only ; t = terrain only ; y = hybrid
+            #imgurl = f"http://mt.google.com/vt/lyrs={layer}&x={xtile}&y={ytile}&z={zoom}"
+
             print("Opening: " + imgurl)
             imgstr = requests.get(imgurl, headers = {"User-Agent": "Python3 - one time DL"})
+            #imgstr = requests.get(imgurl, headers = headers)
 
             try:
                 tile = Image.open(BytesIO(imgstr.content))
+                tile.save(f"cache/dltiles/{zoom},{xtile},{ytile}.png")
 
                 box_x = (xtile - xmin) * 256
                 box_y = (ytile - ymin) * 256
@@ -131,9 +139,9 @@ if __name__ == "__main__":
     xmin, ymin = deg2num2(min_latlong[0], min_latlong[1], zoom, True)
     xmax, ymax = deg2num2(max_latlong[0], max_latlong[1], zoom, True)
     xmin -= 1
-    #xmax -= 1
+    xmax -= 1
     ymin -= 1
-    #ymax -= 1
+    ymax -= 1
     print(f"Coords: ({xmin}, {ymin}) - ({xmax}, {ymax})")
 
     a = getImageCluster2(int(xmin), int(ymin), int(xmax),  int(ymax), zoom)
@@ -153,6 +161,7 @@ if __name__ == "__main__":
     a = a.crop((c, d, x, y))
     """
 
+    """
     #crop end
     x, y = a.size
     x = x - round(256 * (1 - (xmin - int(xmin))))
@@ -164,7 +173,9 @@ if __name__ == "__main__":
     c = round(256 * (xmax - int(xmax)))
     d = round(256 * (ymax - int(ymax)))
     a = a.crop((c, d, x, y))
-    
+    """
 
+    """
+    a = a.resize((10000, 12500), resample = Image.Resampling.NEAREST)
     a.save(f"cache/{zoom},({int(xmin)},{int(ymin)}) - ({int(xmax)},{int(ymax)}).png")
-
+    """

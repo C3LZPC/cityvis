@@ -55,7 +55,9 @@ print_free_mem(device)
 
 
 #color = torch.zeros(3, ahn3.shape[1], ahn3.shape[2], device = device, dtype = torch.uint8)
-color = Image.open("cache/color_map_scaled4.png")
+#color = Image.open("cache/color_map_scaled5.png")
+#color = Image.open("cache/17,(67309,43072) - (67336,43039).png")
+color = Image.open("cache/exported.png")
 color = transform(color).to(device)
 print_free_mem(device)
 
@@ -163,7 +165,11 @@ for x in range(int(max_map.shape[1] / meta_data['step_size']) + 1):
 try:
 	with open(f"{meta_data['step_size']}/metadata.json", "w") as f:
 		f.write(json.dumps(meta_data, indent = 2))
+	with open(f"{meta_data['step_size']}/.gdignore", "w") as f:
+		f.write("")
 except Exception as e:
 	with open(f"{meta_data['step_size']}/metadata.json", "x") as f:
 		f.write(json.dumps(meta_data, indent = 2))
+	with open(f"{meta_data['step_size']}/.gdignore", "x") as f:
+		f.write("")
 

@@ -85,10 +85,10 @@ func _ready():
 	if map_metadata:
 		height_offset = map_metadata["min_height"]
 		max_height = map_metadata["max_height"]
-		var map_max_x = 5
-		var map_max_y = 5
-		#var map_max_x = int(map_metadata["x"])
-		#var map_max_y = int(map_metadata["y"])
+		#var map_max_x = 5
+		#var map_max_y = 5
+		var map_max_x = int(map_metadata["x"])
+		var map_max_y = int(map_metadata["y"])
 		t_x = map_max_x
 		t_y = map_max_y
 		
