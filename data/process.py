@@ -35,7 +35,7 @@ device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
 transform = torchvision.transforms.Compose([torchvision.transforms.PILToTensor()])
 
 meta_data = {
-	"step_size": 512, # 513, 1025, 2049, 4097 : some game terrain handling algorithms require 2**n + 1 map sizes - except the plugin cuts off the last row and column
+	"step_size": 512, # 513, 1025, 2049, 4097 : some game terrain handling algorithms require 2**n + 1 map sizes
 	"min_height": 0.0,
 	"max_height": 0.0,
 	"x_step": 0.5,
@@ -53,16 +53,11 @@ ahn4 = Image.open("cache/AHN4_R_25EZ1.TIF")
 ahn4 = transform(ahn4).to(device)
 print_free_mem(device)
 
-
-#color = torch.zeros(3, ahn3.shape[1], ahn3.shape[2], device = device, dtype = torch.uint8)
-#color = Image.open("cache/color_map_scaled5.png")
-#color = Image.open("cache/17,(67309,43072) - (67336,43039).png")
 color = Image.open("cache/exported.png")
 color = transform(color).to(device)
 print_free_mem(device)
 
-"""
-red = torch.gt(ahn3, ahn4)
+red = torch.gt(ahn3 - ahn4, 5.0)
 color[0] = color[0].masked_fill(red, 0xff)
 color[1] = color[1].masked_fill(red, 0x00)
 color[2] = color[2].masked_fill(red, 0x00)
@@ -72,7 +67,7 @@ torch.cuda.empty_cache()
 print_free_mem(device)
 
 
-blue = torch.lt(ahn3, ahn4)
+blue = torch.lt(ahn3 - ahn4, -5.0)
 color[0] = color[0].masked_fill(blue, 0x00)
 color[1] = color[1].masked_fill(blue, 0x00)
 color[2] = color[2].masked_fill(blue, 0xff)
@@ -80,18 +75,6 @@ del blue
 gc.collect()
 torch.cuda.empty_cache()
 print_free_mem(device)
-
-
-is_close = torch.isclose(ahn3, ahn4, rtol = 0, atol = 1e-1, equal_nan = True) # Ignore 10 cm of measurement error
-color[0] = color[0].masked_fill(is_close, 0x77)
-color[1] = color[1].masked_fill(is_close, 0x77)
-color[2] = color[2].masked_fill(is_close, 0x77)
-del is_close
-gc.collect()
-torch.cuda.empty_cache()
-print_free_mem(device)
-"""
-
 
 
 max_map = torch.maximum(ahn3, ahn4)
