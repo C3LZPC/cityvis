@@ -3,9 +3,9 @@ extends CanvasLayer
 const diamond_material = preload("res://diamond_material.tres")
 
 var load_progress = 0
+var menu_open = false
 
-func _ready():
-	get_node("ColorRect").material = diamond_material
+var cam = null
 
 func printable_num(n : int) -> String:
 	var i = 0.0
@@ -26,11 +26,33 @@ func printable_num(n : int) -> String:
 	
 	return "%10.3f" % i + postfix
 
+func _ready():
+	get_node("Pause/Box/Quit").connect("pressed", self.quit)
+	
+	get_node("ColorRect").material = diamond_material
+	get_node("Pause").hide()
+	get_node("Pos").hide()
+	get_node("LoadProgress").show()
+
 func _process(_delta):
 	get_node("Mertrics/MetricsContainer/FPS").text = "FPS: %10.2f" % Engine.get_frames_per_second()
 	var mem = OS.get_memory_info()
 	#get_node("Mertrics/MetricsContainer/Mem").text = "RAM: " + printable_num(mem["free"]) + " / " + printable_num(mem["available"])
 	get_node("Mertrics/MetricsContainer/Mem").text = "RAM: " + printable_num(mem["free"]) + " / " + printable_num(mem["physical"])
+
+func _input(event):
+	if event is InputEventKey and event.is_pressed():
+		if event.keycode == KEY_ESCAPE:
+			menu_open = !menu_open
+			
+			if menu_open:
+				get_node("Pause").show()
+				cam.set_process(false)
+				cam.is_mouse_lockable = false
+			else:
+				get_node("Pause").hide()
+				cam.set_process(true)
+				cam.is_mouse_lockable = true
 
 func update_position(pos : Vector3) -> void:
 	get_node("Pos/PosContainer/Pos").text = "X: %10.2f " % pos.x + "Y: %10.2f " % pos.y + "Z: %10.2f" % pos.z
@@ -42,6 +64,7 @@ func reset_progressbar(max_num : int) -> void:
 	pb.min_value = 0
 	pb.max_value = max_num
 	pb.value = load_progress
+	get_node("Pos").hide()
 	get_node("LoadProgress").show()
 
 func update_progressbar() -> void:
@@ -67,3 +90,5 @@ func progressbar_done2() -> bool:
 	get_node("Pos").show()
 	return true
 
+func quit():
+	get_tree().quit()

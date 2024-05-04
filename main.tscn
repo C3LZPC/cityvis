@@ -8,7 +8,8 @@
 background_mode = 1
 background_color = Color(0.792157, 0.862745, 1, 1)
 ambient_light_source = 2
-ambient_light_energy = 0.0
+ambient_light_color = Color(1, 1, 1, 1)
+ambient_light_energy = 0.2
 tonemap_mode = 3
 ssao_enabled = true
 ssao_radius = 1000.0

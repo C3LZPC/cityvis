@@ -4,8 +4,9 @@ const mouse_sensitivity = 0.1
 
 var v = Vector3()
 var is_scanning_mouse = true
+var is_mouse_lockable = true
 
-var ui = null
+var ui = null : set = set_ui
 
 func _ready():
 	self.near = 0.1
@@ -52,7 +53,9 @@ func _input(event):
 					Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 					is_scanning_mouse = false
 				elif Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
-					Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
-					is_scanning_mouse = true
-
-
+					if is_mouse_lockable:
+						Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+						is_scanning_mouse = true
+func set_ui(node):
+	ui = node
+	ui.cam = self

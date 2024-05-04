@@ -61,6 +61,7 @@ func _process(_delta):
 			terrain.name = str(c_x) + "_" + str(c_y)
 			terrain.scale = Vector3(0.5, 1, 0.5)
 			terrain.set_shader_type(HTerrain.SHADER_LOW_POLY)
+			terrain.lod_scale = 12.0 # 8.0
 			
 			var t = Thread.new()
 			while t.start(_load_map_from_thread.bind(c_x, c_y, map_step, height_offset, max_height, terrain)) != OK:
@@ -85,10 +86,10 @@ func _ready():
 	if map_metadata:
 		height_offset = map_metadata["min_height"]
 		max_height = map_metadata["max_height"]
-		#var map_max_x = 5
-		#var map_max_y = 5
-		var map_max_x = int(map_metadata["x"])
-		var map_max_y = int(map_metadata["y"])
+		var map_max_x = 5
+		var map_max_y = 5
+		#var map_max_x = int(map_metadata["x"])
+		#var map_max_y = int(map_metadata["y"])
 		t_x = map_max_x
 		t_y = map_max_y
 		
