@@ -75,7 +75,7 @@ jobs:
         run: |
           cd $PROJECT_PATH
           mkdir -v -p export/mac
-          godot --headless --verbose --export-release "Mac OSX" export/mac/$EXPORT_NAME.zip
+          godot --headless --verbose --export-release "macOS" export/mac/$EXPORT_NAME.zip
       - name: Upload Artifact
         uses: actions/upload-artifact@v1
         with:
