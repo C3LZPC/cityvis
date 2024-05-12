@@ -2,7 +2,7 @@ name: "godot-ci export"
 on: push
 
 env:
-  GODOT_VERSION: 4.2.2
+  GODOT_VERSION: 4.2.1
   EXPORT_NAME: cityvis
   PROJECT_PATH: cityvis
 
