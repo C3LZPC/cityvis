@@ -4,7 +4,7 @@ on: push
 env:
   GODOT_VERSION: 4.2.1
   EXPORT_NAME: cityvis
-  PROJECT_PATH: cityvis
+  PROJECT_PATH: .
 
 jobs:
   export-windows:
