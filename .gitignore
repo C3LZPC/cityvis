@@ -1,10 +1,10 @@
 
 
 # Godot 4+ specific ignores
-.godot/
+#.godot/
 
 # Godot general stuff
-*.import
+#*.import
 
 data/cache
 #data/512
