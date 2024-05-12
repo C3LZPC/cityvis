@@ -7,7 +7,7 @@
 *.import
 
 data/cache
-data/512
+#data/512
 
 terrain_test/*
 

@@ -1,7 +1,9 @@
 
 import math
+import os
 import numpy as np
 import requests
+import zipfile
 
 from io import BytesIO
 from PIL import Image, ImageDraw
@@ -52,7 +54,7 @@ def dl_tile_if_not_exists_G(x, y, z):
         print(f"Downloading: {file_name}")
         headers = {"User-Agent":"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36"}
         layer = "s" # h = roads only ; m = standard roadmap ; p = terrain ; r = somehow altered roadmap ; s = satellite only ; t = terrain only ; y = hybrid
-        imgurl = f"http://mt.google.com/vt/lyrs={layer}&x={xtile}&y={ytile}&z={zoom}"
+        imgurl = f"http://mt.google.com/vt/lyrs={layer}&x={x}&y={y}&z={z}"
         imgstr = requests.get(imgurl, headers = headers)
         tile = Image.open(BytesIO(imgstr.content))
         tile.save(file_name)
@@ -64,9 +66,42 @@ def dl_tile_if_not_exists(x, y, z, type = "OSM"):
         dl_tile_if_not_exists_G(x, y, z)
 
 
+
+##########
+
+
+
 tile_size = 256
 Z = 17
 
+try:
+    f = open("cache/AHN4_R_25EZ1.TIF", "rb")
+    f.close()
+except:
+    url = "https://ns_hwh.fundaments.nl/hwh-ahn/ahn4/03a_DSM_0.5m/R_25EZ1.zip"
+    urlstr = requests.get(url, headers = {"User-Agent": "Python3 - one time DL"})
+    with open("cache/AHN4_R_25EZ1.zip", "wb") as f:
+        f.write(urlstr.content)
+    with zipfile.ZipFile("cache/AHN4_R_25EZ1.zip","r") as f:
+        f.getinfo("R_25EZ1.TIF").filename = "cache/AHN4_R_25EZ1.TIF"
+        f.extract("R_25EZ1.TIF")
+
+try:
+    f = open("cache/AHN3_R_25EZ1.TIF", "rb")
+    f.close()
+except:
+    url = "https://ns_hwh.fundaments.nl/hwh-ahn/AHN3/DSM_50cm/R_25EZ1.zip"
+    urlstr = requests.get(url, headers = {"User-Agent": "Python3 - one time DL"})
+    with open("cache/AHN3_R_25EZ1.zip", "wb") as f:
+        f.write(urlstr.content)
+    with zipfile.ZipFile("cache/AHN3_R_25EZ1.zip","r") as f:
+        f.getinfo("R_25EZ1.TIF").filename = "cache/AHN3_R_25EZ1.TIF"
+        f.extract("R_25EZ1.TIF")
+
+try:
+    os.mkdir("cache/dltiles")
+except:
+    pass
 
 ds = gdal.Open("cache/AHN4_R_25EZ1.TIF")
 old_cs = osr.SpatialReference()
@@ -105,9 +140,15 @@ for x in range(width):
         ixt = int(xt)
         iyt = int(yt)
 
-        dl_tile_if_not_exists(ixt, iyt, Z)
+        # OSM
+        #dl_tile_if_not_exists(ixt, iyt, Z)
+        #tile = f"cache/dltiles/{Z},{ixt},{iyt}.png"
 
-        tile = f"cache/dltiles/{Z},{ixt},{iyt}.png"
+        # G
+        dl_tile_if_not_exists(ixt, iyt, Z, "G")
+        tile = f"cache/dltiles/g_{Z},{ixt},{iyt}.png"
+
+
         #print(tile)
         tile = Image.open(tile).convert("RGBA")
         px = tile.load()

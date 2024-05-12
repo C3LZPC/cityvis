@@ -1,15 +1,25 @@
-[gd_scene load_steps=6 format=3 uid="uid://dtd0lextaqrsi"]
+[gd_scene load_steps=8 format=3 uid="uid://dtd0lextaqrsi"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_f0irb"]
 [ext_resource type="PackedScene" uid="uid://djcyhlr4lfduk" path="res://camera_controller.tscn" id="2_xa613"]
 [ext_resource type="PackedScene" uid="uid://2oe5jwv0f1c8" path="res://gui.tscn" id="3_i0jnd"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_hfyb8"]
+sky_top_color = Color(0.792157, 0.862745, 1, 1)
+sky_horizon_color = Color(0.51342, 0.670759, 0.841692, 1)
+ground_bottom_color = Color(0.254306, 0.26652, 0.6323, 1)
+ground_horizon_color = Color(0.513726, 0.670588, 0.843137, 1)
+
+[sub_resource type="Sky" id="Sky_otlk1"]
+sky_material = SubResource("ProceduralSkyMaterial_hfyb8")
+
 [sub_resource type="Environment" id="Environment_ppoij"]
-background_mode = 1
+background_mode = 2
 background_color = Color(0.792157, 0.862745, 1, 1)
+sky = SubResource("Sky_otlk1")
 ambient_light_source = 2
 ambient_light_color = Color(1, 1, 1, 1)
-ambient_light_energy = 0.2
+ambient_light_energy = 0.0
 tonemap_mode = 3
 ssao_enabled = true
 ssao_radius = 1000.0
@@ -26,12 +36,11 @@ camera_attributes = SubResource("CameraAttributesPractical_rhknt")
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 10, 0)
 light_color = Color(0.941176, 0.941176, 0.941176, 1)
-light_indirect_energy = 0.7
+light_indirect_energy = 0.0
 light_volumetric_fog_energy = 0.0
 light_angular_distance = 0.5
 light_bake_mode = 0
 shadow_enabled = true
-sky_mode = 1
 
 [node name="TerrainBase" type="Node3D" parent="."]
 
