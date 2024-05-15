@@ -23,7 +23,7 @@ res://addons/zylann.hterrain/tools/generate_mesh_dialog.tscn::fd4e047b782cffb304
 res://addons/zylann.hterrain/tools/panel.tscn::b387b2b373602c4c0e09fa376ae349fb::1711817533::res://.godot/exported/133200997/export-6d2b1be5c2b1a865ce36fd18ac35e50d-panel.scn
 res://addons/zylann.hterrain/tools/progress_window.tscn::52b4204b77e8b1386bc654d21e05b776::1711817533::res://.godot/exported/133200997/export-cda084b2620f52992689d666e5404d5b-progress_window.scn
 res://addons/zylann.hterrain/tools/terrain_preview.tscn::c957c600dd3ccf378e35281504d434df::1711817533::res://.godot/exported/133200997/export-1069f0ca099718f66ed08c8088bd9309-terrain_preview.scn
-res://main.tscn::c665305dc7ebf6c742dc00840d9eca12::1714373988::res://.godot/exported/133200997/export-3070c538c03ee49b7677ff960a3f5195-main.scn
-res://gui.tscn::df4e4140e622f0d3eee0bc7d5b1071b2::1714373675::res://.godot/exported/133200997/export-6a6a2d64feb611bd00115e0ad0692b2e-gui.scn
-res://camera_controller.tscn::71dccca923900b32c2e8725c0d1dcef7::1713696765::res://.godot/exported/133200997/export-1aeb81ce7e79dea103d747f37b62fa43-camera_controller.scn
+res://main.tscn::9db97a4538bcb97221252c61ddf77a01::1715542639::res://.godot/exported/133200997/export-3070c538c03ee49b7677ff960a3f5195-main.scn
+res://gui.tscn::9dd923bbf50371d586225b3a858dc8a6::1715542396::res://.godot/exported/133200997/export-6a6a2d64feb611bd00115e0ad0692b2e-gui.scn
+res://camera_controller.tscn::71dccca923900b32c2e8725c0d1dcef7::1715542396::res://.godot/exported/133200997/export-1aeb81ce7e79dea103d747f37b62fa43-camera_controller.scn
 res://diamond_material.tres::a2819619c5dfe4b03c1bae1125270e43::1713696765::res://.godot/exported/133200997/export-73c8305c864784a740ee07ee613d1152-diamond_material.res
