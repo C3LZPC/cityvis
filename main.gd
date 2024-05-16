@@ -96,4 +96,5 @@ func _ready():
 		
 		get_node("Camera3D").translate(Vector3(map_max_y * 0.5 * 0.5 * map_step, 0, map_max_x * 0.5 * 0.5 * map_step))
 		
+		ui.set_map_extents(map_max_y * 0.5 * map_step, 1000, map_max_x * 0.5 * map_step)
 		ui.reset_progressbar(map_max_x * map_max_y)

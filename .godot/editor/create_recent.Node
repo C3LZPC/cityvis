@@ -1,4 +1,9 @@
+OptionButton
+HBoxContainer
+Button
+SpinBox
+Label
+HSeparator
 CenterContainer
 PanelContainer
-Button
 VBoxContainer

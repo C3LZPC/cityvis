@@ -16,7 +16,6 @@ grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
 [node name="Pos" type="PanelContainer" parent="."]
-visible = false
 offset_right = 40.0
 offset_bottom = 50.0
 
@@ -29,6 +28,54 @@ text = "Position:"
 
 [node name="Pos" type="Label" parent="Pos/PosContainer"]
 layout_mode = 2
+
+[node name="HSeparator" type="HSeparator" parent="Pos/PosContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Pos/PosContainer"]
+layout_mode = 2
+
+[node name="JumpLabel" type="Label" parent="Pos/PosContainer/HBoxContainer"]
+layout_mode = 2
+text = "Jump to:"
+
+[node name="X" type="SpinBox" parent="Pos/PosContainer/HBoxContainer"]
+layout_mode = 2
+step = 0.0
+prefix = "X: "
+
+[node name="Y" type="SpinBox" parent="Pos/PosContainer/HBoxContainer"]
+layout_mode = 2
+step = 0.0
+prefix = "Y: "
+
+[node name="Z" type="SpinBox" parent="Pos/PosContainer/HBoxContainer"]
+layout_mode = 2
+step = 0.0
+prefix = "Z: "
+
+[node name="Jump" type="Button" parent="Pos/PosContainer"]
+layout_mode = 2
+text = "Jump"
+
+[node name="HSeparator2" type="HSeparator" parent="Pos/PosContainer"]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="Pos/PosContainer"]
+layout_mode = 2
+
+[node name="Label2" type="Label" parent="Pos/PosContainer/HBoxContainer2"]
+layout_mode = 2
+text = "Jump to:
+"
+
+[node name="JumpOption" type="OptionButton" parent="Pos/PosContainer/HBoxContainer2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Jump2" type="Button" parent="Pos/PosContainer"]
+layout_mode = 2
+text = "Jump"
 
 [node name="Mertrics" type="PanelContainer" parent="."]
 anchors_preset = 3

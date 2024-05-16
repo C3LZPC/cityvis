@@ -7,6 +7,16 @@ var menu_open = false
 
 var cam = null
 
+var pois = {
+	"New houses": Vector3(2018.04, 37.98, 2891.79),
+	"Rebuilt shoreline": Vector3(407.68, 95.89, 4257.79),
+	"Railroad station": Vector3(1825.23, 78.55, 5869.82),
+	#"Construction yard": Vector3(1095.67, 64.18, 5069.48),
+	"Baths (?)": Vector3(3103.19, 25.59, 3714.97),
+	"Sports field": Vector3(3542.87, 43.75, 3642.67),
+	"Shipyards": Vector3(494.46, 95.88, 2735.57)
+}
+
 func printable_num(n : int) -> String:
 	var i = 0.0
 	var postfix = " B"
@@ -28,6 +38,11 @@ func printable_num(n : int) -> String:
 
 func _ready():
 	get_node("Pause/Box/Quit").connect("pressed", self.quit)
+	get_node("Pos/PosContainer/Jump").connect("pressed", self.execute_jump)
+	get_node("Pos/PosContainer/Jump2").connect("pressed", self.jump_to_poi)
+	
+	for e in pois.keys():
+		get_node("Pos/PosContainer/HBoxContainer2/JumpOption").add_item(e)
 	
 	get_node("ColorRect").material = diamond_material
 	get_node("Pause").hide()
@@ -92,3 +107,26 @@ func progressbar_done2() -> bool:
 
 func quit():
 	get_tree().quit()
+
+func set_map_extents(x, y, z):
+	get_node("Pos/PosContainer/HBoxContainer/X").max_value = x
+	get_node("Pos/PosContainer/HBoxContainer/Y").max_value = y
+	get_node("Pos/PosContainer/HBoxContainer/Z").max_value = z
+
+func execute_jump():
+	var x = get_node("Pos/PosContainer/HBoxContainer/X").value
+	var y = get_node("Pos/PosContainer/HBoxContainer/Y").value
+	var z = get_node("Pos/PosContainer/HBoxContainer/Z").value
+	
+	if cam != null:
+		cam.transform.origin = Vector3(x, y, z)
+	
+	get_node("Pos/PosContainer/Jump").release_focus()
+
+func jump_to_poi():
+	var k = get_node("Pos/PosContainer/HBoxContainer2/JumpOption").get_item_text(get_node("Pos/PosContainer/HBoxContainer2/JumpOption").selected)
+	
+	if cam != null:
+		cam.transform.origin = pois[k]
+	
+	get_node("Pos/PosContainer/Jump2").release_focus()
